@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.auth.demo.mapper.user.UserMapper">
+    <select id="findByLoginId" resultType="com.example.auth.demo.entity.user.UserDetail">
+        SELECT id,nickname,phonenum,common_id,`password`,role,isVerify from `user` where phonenum = #{loginid} or common_id = #{loginid};
+    </select>
+
+    <select id="findById" resultType="com.example.auth.demo.entity.user.UserDetail">
+        SELECT id,nickname,phonenum,common_id,`password`,role,isVerify from `user` where id = #{id};
+    </select>
+
+    <select id="findByPhonenum" resultType="Integer">
+        SELECT id from `user` where phonenum = #{phonenum};
+    </select>
+
+    <select id="updatePswdDate">
+        UPDATE user_detail SET lastPasswordResetDate = NOW() WHERE id = #{id};
+    </select>
+
+    <insert id="regist" parameterType="com.example.auth.demo.entity.user.UserDetail" useGeneratedKeys="true" keyProperty="id">
+        insert into `user` (nickname,phonenum,password,lastPasswordResetDate,role) VALUES (#{nickname},#{phonenum},#{password},#{lastPasswordResetDate},#{role});
+    </insert>
+
+    <insert id="insertUserDetail" parameterType="com.example.auth.demo.entity.user.UserDetail" useGeneratedKeys="true" keyProperty="id">
+        insert into `user` (nickname,phonenum,lastPasswordResetDate,role) VALUES (#{nickname},#{phonenum},#{lastPasswordResetDate},#{role});
+    </insert>
+
+    <insert id="insertRole">
+        insert into sys_user_role (user_id, role_id) VALUES (#{userId}, #{roleId});
+    </insert>
+
+    <!--<select id="findRoleById" resultType="com.example.auth.demo.entity.userLogin.Role">-->
+      <!--select id, name, nameZh from sys_role where id = #{roleId}-->
+    <!--</select>-->
+
+    <!--<select id="findRoleByUserId" resultType="com.example.auth.demo.entity.userLogin.Role">-->
+        <!--select * from sys_role where id in (SELECT role_id from sys_user_role where user_id = #{userId});-->
+    <!--</select>-->
+</mapper>

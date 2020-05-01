@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.auth.demo.mapper.admin.AdminMapper">
+    <update id="changeVerifyState">
+        UPDATE verifyinfo SET state = #{state},checktime = NOW() WHERE default_id = #{id} AND id = #{userid};
+    </update>
+
+
+    <update id="updateUserDetail">
+        UPDATE `user` SET isVerify = #{state} WHERE id = #{id};
+    </update>
+
+
+    <select id="getVerifyImage" resultType="String">
+        SELECT faceimgpath FROM verifyinfo WHERE default_id = #{id} AND id = #{userid};
+    </select>
+
+    <update id="addUserFaceFeature" >
+        UPDATE `user` SET face_feature = #{feature} WHERE id = #{userid};
+    </update>
+
+    <insert id="addRoom" parameterType="com.example.auth.demo.entity.common.Room" useGeneratedKeys="true" keyProperty="room_id">
+        INSERT INTO room (name,imagepath,area,min_people,max_people,equipment,place,label,isNeedPeopleCheck)
+        VALUES(#{name},#{imagepath},#{area},#{min_people},#{max_people},#{equipment},#{place},#{label},#{isNeedPeopleCheck})
+    </insert>
+
+    <update id="updateimgPath">
+        UPDATE room SET imagepath = #{path} WHERE room_id = #{roomid};
+    </update>
+
+</mapper>

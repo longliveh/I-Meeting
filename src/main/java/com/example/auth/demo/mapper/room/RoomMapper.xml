@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.auth.demo.mapper.room.RoomMapper">
+    <resultMap id="UserFaceInfo" type="com.example.auth.demo.entity.face.UserFaceInfo">
+        <result property="name" column="name"/>
+        <association property="faceFeature" javaType="com.arcsoft.face.FaceFeature">
+            <result property="featureData" column="face_feature"/>
+        </association>
+    </resultMap>
+
+    <select id="getFaceFeatureById" resultMap="UserFaceInfo">
+        SELECT face_feature,name FROM `user`,verifyinfo WHERE `user`.id = #{userid} AND verifyinfo.id = #{userid};
+    </select>
+
+    <select id="getCurrentMeettingParticipant" resultType="String">
+        select participant from reservation WHERE room_id = #{room_id} AND startdatetime &lt;= #{time} AND enddatetime >= #{time} order by startdatetime ASC ;
+    </select>
+
+    <select id="getMeeting" resultType="com.example.auth.demo.entity.common.Reservation_">
+        select room_id,originator,startdatetime,enddatetime,participant,theme,remarks from reservation WHERE room_id = #{room_id} AND startdatetime >= #{datestart} AND enddatetime &lt;= #{dateend} AND state = 2 order by startdatetime ASC;
+    </select>
+
+
+
+</mapper>

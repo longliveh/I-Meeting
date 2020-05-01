@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.auth.demo.mapper.user.BookMapper">
+
+    <select id="getName" resultType="String">
+        select `name` from verifyinfo where id = #{user_id}
+    </select>
+
+    <insert id="bookroom" parameterType="com.example.auth.demo.entity.common.Reservation" useGeneratedKeys="true" keyProperty="default_id">
+        insert into reservation (room_id,originator,startdatetime,enddatetime,theme,remarks,createtime,state)
+         values (#{room_id},#{originator},#{startdatetime},#{enddatetime},#{theme},#{remarks},NOW(),0);
+    </insert>
+
+    <select id="selectResById" resultType="com.example.auth.demo.entity.common.Reservation">
+        SELECT default_id,room_id,originator,startdatetime,enddatetime,participant,theme,remarks,createtime FROM reservation WHERE default_id = #{default_id};
+    </select>
+    
+    <select id="selectRoomById" resultType="com.example.auth.demo.entity.common.Room">
+        select room_id,name,imagepath,area,min_people,max_people,equipment,place,label from room where room_id = #{room_id};
+    </select>
+
+    <update id="addparticipants">
+        UPDATE reservation set participant = #{participants},state = 2 WHERE default_id = #{default_id}
+    </update>
+
+    <select id="selectIdAndNameByDep" resultType="com.example.auth.demo.entity.user.IdAndName">
+        select id as userid,name from verifyinfo WHERE department_id = #{department_id};
+    </select>
+
+    <select id="getRoomVagueByName" resultType="com.example.auth.demo.entity.common.Room">
+        SELECT * FROM `room` where locate(#{name},`name`)>0
+    </select>
+
+    <select id="getTimeStamp" resultType="com.example.auth.demo.entity.common.Reservation">
+        select room_id,startdatetime,enddatetime from reservation WHERE room_id = #{room_id} AND startdatetime >= #{datestart} AND enddatetime &lt;= #{dateend} AND state = 2;
+    </select>
+
+
+    <select id="getSuitableRoom" resultType="com.example.auth.demo.entity.common.Room">
+        SELECT
+        room_id,
+        `name`,
+        imagepath,
+        area,
+        min_people,
+        max_people,
+        equipment,
+        place,
+        label
+        from `room`
+        <trim prefix="where" prefixOverrides="and | or">
+            <if test="min != null and max != null">
+                AND min_people &lt;= #{min} AND max_people >= #{max}
+            </if>
+            <if test="type != null and type != ''">
+                AND LOCATE(#{type},label)>0
+            </if>
+            <if test="devices != null and devices.size() != 0">
+                <foreach collection="devices" item="device" open="and (" close=")" separator="and">
+                    LOCATE(#{device},equipment)>0
+                </foreach>
+            </if>
+        </trim>
+    </select>
+
+
+
+    <select id="getdepartment" resultType="com.example.auth.demo.entity.common.Department">
+        SELECT * FROM department;
+    </select>
+
+
+
+</mapper>

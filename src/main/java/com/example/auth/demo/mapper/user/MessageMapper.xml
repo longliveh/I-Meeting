@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.auth.demo.mapper.user.MessageMapper">
+    <select id="getMessage" resultType="Integer">
+        SELECT meeting_id FROM offlinemessage WHERE target_userid = #{userid} and state = 0;
+    </select>
+
+    <insert id="addMessage">
+        insert into offlinemessage (target_userid,meeting_id) values (#{target_userid},#{meeting_id});
+    </insert>
+
+    <update id="rmMessage">
+        update offlinemessage set state = 1 where target_userid = #{target_userid} and meeting_id = #{meeting_id}
+    </update>
+
+
+
+    <resultMap id="message" type="com.example.auth.demo.cache.msg.Message">
+        <association property="room" javaType="com.example.auth.demo.entity.common.Room">
+            <id column="room_id" jdbcType="INTEGER" property="room_id"/>
+            <result  column="name" jdbcType="VARCHAR" property="name"/>
+            <result  column="imagepath" jdbcType="VARCHAR" property="imagepath"/>
+            <result  column="area" jdbcType="REAL" property="area"/>
+            <result  column="min_people" jdbcType="INTEGER" property="min_people"/>
+            <result  column="max_people" jdbcType="INTEGER" property="max_people"/>
+            <result  column="equipment" jdbcType="VARCHAR" property="equipment"/>
+            <result  column="place" jdbcType="VARCHAR" property="place"/>
+            <result  column="label" jdbcType="VARCHAR" property="label"/>
+        </association>
+        <association property="reservation" javaType="com.example.auth.demo.entity.common.Reservation">
+            <id column="default_id" jdbcType="INTEGER" property="default_id"/>
+            <result  column="room_id" jdbcType="INTEGER" property="room_id"/>
+            <result  column="originator" jdbcType="VARCHAR" property="originator"/>
+            <result  column="startdatetime" jdbcType="VARCHAR" property="startdatetime"/>
+            <result  column="enddatetime" jdbcType="VARCHAR" property="enddatetime"/>
+            <result  column="participant" jdbcType="VARCHAR" property="participant"/>
+            <result  column="theme" jdbcType="VARCHAR" property="theme"/>
+            <result  column="remarks" jdbcType="VARCHAR" property="remarks"/>
+            <result  column="state" jdbcType="INTEGER" property="state"/>
+            <result  column="createtime" jdbcType="VARCHAR" property="createtime"/>
+        </association>
+    </resultMap>
+
+    <select id="getAllMeeting" resultMap="message">
+        select * from reservation,room where
+        (LOCATE(#{case0},participant)>0 or
+        LOCATE(#{case1},participant)>0 or
+        LOCATE(#{case2},participant)>0 or
+        LOCATE(#{case3},participant)>0) and room.room_id = reservation.room_id;
+    </select>
+</mapper>
